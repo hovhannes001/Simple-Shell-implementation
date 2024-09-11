@@ -33,7 +33,7 @@ int main(){
     while(true) {
         printf("%s ",promt_name);
         memset(command,0,SIZE);
-        fgets(command,SIZE,stdin);
+        fgets(command,SIZE,stdin); //SIZE - 2 for newline and /0
         remove_newline(command);
         strcpy(matrix[HISTORY - i],command);
         
