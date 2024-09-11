@@ -19,12 +19,12 @@ char* argument_from_string(const char *command, int index) {
     int i = index;
     while (i < size && command[i] == ' ') {
         i++;
-    }
+    } //you can use string functions like strchr, strcpy ...
     while (i < size && command[i] != ' ') {
         argument[j++] = command[i++];
     }
     argument[j] = '\0';
-    
+    //handle the case when commands or argument doesnt exist(print error message for example)
     return argument; 
 }
 //----------------------------------------------------------cd------------------------------------------
@@ -43,14 +43,14 @@ void change_directory(char *command) {
 }
 //----------------------------------------------------------exit/help------------------------------------------
 void my_exit(char* command) {
-    exit(EXIT_FAILURE);
+    exit(EXIT_FAILURE); //not exit_failure, use exit_success
 }
 void help(char* command){ 
-    system("/bin/bash -c 'help'");
+    system("/bin/bash -c 'help'"); //error checking
 }
 //----------------------------------------------------------chpromt------------------------------------------
 void change_promt(char *command){
-    strcpy(promt_name,argument_from_string(command,strlen("chpromt")));
+    strcpy(promt_name,argument_from_string(command,strlen("chpromt"))); 
     strcat(promt_name,"$");
 }
 
@@ -94,7 +94,7 @@ void echo_function(char *command){
     }
 }
 char* str_name(char* variable){
-    char* name = malloc(sizeof(SIZE));
+    char* name = malloc(sizeof(SIZE)); // sizeof(SIZE)?? sizeof(char) * SIZE, error checking
     int i = 0;
     for(;variable[i] != '=';i++) {
         name[i] = variable[i];
@@ -103,8 +103,8 @@ char* str_name(char* variable){
     return name;
 }
 char* str_value(char* variable){
-    char* value = malloc(sizeof(SIZE));
-    variable++;
+    char* value = malloc(sizeof(SIZE)); //the same issue
+    variable++; //use tmp char* for  increment operations
     int i = 0;
     while(*variable == '='){
         variable++;
@@ -116,9 +116,10 @@ char* str_value(char* variable){
     value[i] = '\0';
     return value;
 }
-void my_setenv(char *command) {
-    char* variable0;
+void my_setenv(char *command) { //segmentation fault
+    char* variable0; 
     char* variable = argument_from_string(command,strlen("setenv"));
+    //variable0 = malloc(strlen(variable) + 1);, check if variable0 is NULL
     strcpy(variable0,variable);
     char *name = str_name(variable);
     char* value = str_value(variable);
@@ -128,6 +129,10 @@ void my_setenv(char *command) {
         perror("setenv failed: ");
         return;
     }
+    //free(name);
+    //free(value);
+    //free(variable);
+    //free(variable0);
 }
 void my_unsetenv(char *command) {
     if(unsetenv(argument_from_string(command,strlen("unsetenv"))) < 0) {
@@ -165,10 +170,10 @@ void history(char* command) {
         return ;
     }
     if(!strncmp(command,"setenv",2)) {
-        my_setenv(command);
+        my_setenv(command); 
     }
     if(!strncmp(command,"unsetenv",strlen("unsetenv"))) {
-         unsetenv(command);
+         unsetenv(command); //my_unsetenv instead of unsetenv
      }
     if(!strncmp(command,"chpromt",strlen("chpromt"))) {
          change_promt(command);
